@@ -7,15 +7,17 @@ from mail_sender import MailSender
 
 
 msg = iodef.IODEF()
+report_time = datetime.datetime.now()
+report_id = 42
 
-msg.set("formatid", "ip-blacklist-042")
+msg.set("formatid", "ip-blacklist-{0}".format(report_id))
 msg.set("version", "1.00")
 msg.set("lang", "fr")
 
 msg.set("incident(0).purpose", "reporting")
 msg.set("incident(0).restriction", "private")
 msg.set("incident(0).incident_id.name", "exemple-iodef")
-msg.set("incident(0).report_time", str(datetime.datetime.now()))
+msg.set("incident(0).report_time", str(report_time))
 msg.set("incident(0).description", "Liste d'IP connues malveillantes")
 
 msg.set("incident(0).assessment.occurrence", "actual")
@@ -40,7 +42,9 @@ msg.set("incident(0).event_data(1).flow(1).system(0).node.address(0).address", "
 msg.set("incident(0).event_data(1).flow(1).system(0).description", "Serveur IRC C2")
 msg.set("incident(0).event_data(1).expectation.action", "block-host")
 
-incident_file = 'incident.json'
+incident_file = 'incident-{0}-{1}-{2}.json'.format(str(report_time.date()),
+                                                   report_time.time().strftime('%Hh%Mm'),
+                                                   report_id)
 
 with open(incident_file, 'w') as fd:
     fd.write(msg.toJSON())
